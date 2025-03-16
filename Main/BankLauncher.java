@@ -2,7 +2,6 @@ package Main;
 
 import Accounts.Account;
 import Bank.Bank;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -19,6 +18,10 @@ public class BankLauncher {
 
     public boolean isLogged() {
         return loggedBank != null;
+    }
+
+    public List<Bank> getAllBanks() {
+        return BANKS ;
     }
 
     public void bankInit() {

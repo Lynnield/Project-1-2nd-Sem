@@ -31,7 +31,7 @@ public class SavingsAccount extends Account implements Deposit, Withdrawal, Fund
         }
         // Optionally check bank's deposit limit, etc.
         balance += amount;
-        addNewTransaction(accountNumber, Transaction.Transactions.Deposit, "Deposited " + amount);
+        addTransaction("Deposit", amount);
         return true;
     }
 
@@ -49,7 +49,7 @@ public class SavingsAccount extends Account implements Deposit, Withdrawal, Fund
             return false;
         }
         balance -= amount;
-        addNewTransaction(accountNumber, Transaction.Transactions.Withdraw, "Withdrew " + amount);
+        addTransaction("Withdraw", amount);
         return true;
     }
 
@@ -71,8 +71,7 @@ public class SavingsAccount extends Account implements Deposit, Withdrawal, Fund
         }
         // Deduct from this account
         balance -= amount;
-        addNewTransaction(accountNumber, Transaction.Transactions.FundTransfer,
-                String.format("Transferred %.2f to %s", amount, target.getAccountNumber()));
+        addTransaction("FundTransfer", amount);
 
         // Deposit into the target account
         ((SavingsAccount) target).cashDeposit(amount);

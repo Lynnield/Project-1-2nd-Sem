@@ -1,8 +1,8 @@
 package Accounts;
 
-import java.util.ArrayList;
-
 import Bank.Bank;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An abstract Account class based on the UML:
@@ -21,11 +21,12 @@ import Bank.Bank;
  *  + getBalance()   // abstract method for subclasses to implement
  */
 public abstract class Account {
-    protected Bank bank;
-    protected String accountNumber;
-    protected String ownerName;
-    protected String pin;
-    protected ArrayList<Transaction> transactions;
+    private Bank bank;
+    private String accountNumber;
+    private String ownerName;
+    private String pin;
+    private List<Transaction> transactions;
+    
 
     /**
      * Constructor that sets the basic fields for an account.
@@ -54,19 +55,17 @@ public abstract class Account {
         return pin;
     }
 
-    public ArrayList<Transaction> getTransactions() {
+    public List<Transaction> getTransactions() {
         return transactions;
     }
 
     /**
      * Adds a new transaction to this account's transaction list.
-     * @param accNum The account number that triggered this transaction.
      * @param type The type of transaction (Deposit, Withdraw, etc.).
-     * @param description Description or details of the transaction.
+     * @param amount The amount of the transaction.
      */
-    public void addNewTransaction(String accNum, Transaction.Transactions type, String description) {
-        Transaction t = new Transaction(accNum, type, description);
-        transactions.add(t);
+    public void addTransaction(String type, double amount) {
+        transactions.add(new Transaction(accountNumber, Transaction.Transactions.valueOf(type), type, ownerName, type, amount));
     }
 
     /**
@@ -78,7 +77,6 @@ public abstract class Account {
 
     @Override
     public String toString() {
-        String bankName = (bank != null) ? bank.getBankName() : "NoBank";
-        return String.format("%s@%s [Owner: %s]", accountNumber, bankName, ownerName);
+        return String.format("Account[%s, %s]", accountNumber, ownerName);
     }
 }

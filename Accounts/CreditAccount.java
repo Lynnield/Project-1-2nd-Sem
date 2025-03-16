@@ -77,7 +77,7 @@ public class CreditAccount extends Account implements Payment, Recompense {
             return false;
         }
         loanAmount += amount;
-        addNewTransaction(accountNumber, Transaction.Transactions.Withdraw, "Charged " + amount);
+        addTransaction("Charge", amount);
         return true;
     }
 
@@ -106,9 +106,7 @@ public class CreditAccount extends Account implements Payment, Recompense {
         saver.withdrawal(amount);
         double oldLoan = loanAmount;
         loanAmount = Math.max(0, loanAmount - amount);
-        addNewTransaction(accountNumber, Transaction.Transactions.Payment,
-                String.format("Payment of %.2f from %s (old debt=%.2f, new debt=%.2f)",
-                        amount, saver.getAccountNumber(), oldLoan, loanAmount));
+        addTransaction("Payment", amount);
         return true;
     }
 
@@ -128,7 +126,7 @@ public class CreditAccount extends Account implements Payment, Recompense {
             return false;
         }
         loanAmount -= amount;
-        addNewTransaction(accountNumber, Transaction.Transactions.Recompense, "Recompensed " + amount);
+        addTransaction("Recompense", amount);
         return true;
     }
 

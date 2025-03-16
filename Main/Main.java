@@ -1,8 +1,10 @@
 package Main;
 
-import java.util.Scanner;
-
 import Bank.Bank;
+import Accounts.Account;
+import Accounts.Transaction;
+import java.util.List;
+import java.util.Scanner;
 
 public class Main {
 
@@ -22,10 +24,12 @@ public class Main {
     private static Bank currentBank = null;
 
     public static void main(String[] args) {
+        // Initialize default banks
+        bankLauncher.bankInit();
 
         while (true) {
             showMenuHeader("Main Menu");
-            System.out.println("[1] Accounts Login");
+            System.out.println("\n[1] Accounts Login");
             System.out.println("[2] Bank Login");
             System.out.println("[3] Create New Bank");
             System.out.println("[4] Create New Account");
@@ -59,15 +63,48 @@ public class Main {
      * Processes bank login.
      */
     private static void bankLoginProcess() {
-        showMenuHeader("Bank Login");
-        System.out.print("Enter Bank ID or Name: ");
-        String bankIdOrName = input.nextLine();
-        bankLauncher.bankLogin(bankIdOrName);
-        currentBank = bankLauncher.getLoggedBank();
-        if (currentBank != null) {
-            System.out.println("Bank logged in: " + currentBank.getBankName());
+        while (true) {
+            showMenuHeader("Bank Login");
+            System.out.println("[1] Enter Bank ID or Name");
+            System.out.println("[2] Show Available Banks");
+            System.out.println("[3] Go Back");
+            System.out.print("Select an option: ");
+            int choice = input.nextInt();
+            input.nextLine(); // consume newline
+
+            if (choice == 1) {
+                System.out.print("Enter Bank ID or Name: ");
+                String bankIdOrName = input.nextLine();
+                bankLauncher.bankLogin(bankIdOrName);
+                currentBank = bankLauncher.getLoggedBank();
+                if (currentBank != null) {
+                    System.out.println("Bank logged in: " + currentBank.getBankName());
+                    break;
+                } else {
+                    System.out.println("Bank not found.");
+                }
+            } else if (choice == 2) {
+                showAvailableBanks();
+            } else if (choice == 3) {
+                break;
+            } else {
+                System.out.println("Invalid option!");
+            }
+        }
+    }
+
+    /**
+     * Shows the available banks with their IDs.
+     */
+    private static void showAvailableBanks() {
+        showMenuHeader("Available Banks");
+        List<Bank> banks = bankLauncher.getAllBanks();
+        if (banks.isEmpty()) {
+            System.out.println("No banks available.");
         } else {
-            System.out.println("Bank not found.");
+            for (Bank bank : banks) {
+                System.out.println("Bank ID: " + bank.getBankId() + ", Bank Name: " + bank.getBankName());
+            }
         }
     }
 
@@ -176,7 +213,8 @@ public class Main {
             System.out.println("[2] Withdraw");
             System.out.println("[3] Fund Transfer");
             System.out.println("[4] Show Balance");
-            System.out.println("[5] Logout");
+            System.out.println("[5] Show Transactions");
+            System.out.println("[6] Logout");
             System.out.print("Select an option: ");
             int choice = input.nextInt();
             input.nextLine(); // consume newline
@@ -186,12 +224,14 @@ public class Main {
                     double deposit = input.nextDouble();
                     input.nextLine();
                     saLauncher.depositProcess(deposit);
+                    saLauncher.getLoggedAccount().addTransaction("Deposit", deposit);
                     break;
                 case 2:
                     System.out.print("Enter withdrawal amount: ");
                     double withdraw = input.nextDouble();
                     input.nextLine();
                     saLauncher.withdrawProcess(withdraw);
+                    saLauncher.getLoggedAccount().addTransaction("Withdraw", withdraw);
                     break;
                 case 3:
                     System.out.print("Enter recipient account number: ");
@@ -200,11 +240,15 @@ public class Main {
                     double transfer = input.nextDouble();
                     input.nextLine();
                     saLauncher.fundTransferProcess(targetAcc, transfer);
+                    saLauncher.getLoggedAccount().addTransaction("FundTransfer", transfer);
                     break;
                 case 4:
                     System.out.println("Current Balance: " + saLauncher.getLoggedAccount().getBalance());
                     break;
                 case 5:
+                    showTransactions(saLauncher.getLoggedAccount());
+                    break;
+                case 6:
                     saLauncher.logout();
                     exit = true;
                     break;
@@ -225,7 +269,8 @@ public class Main {
             System.out.println("[2] Payment (from Savings Account)");
             System.out.println("[3] Recompense");
             System.out.println("[4] Show Available Credit and Current Debt");
-            System.out.println("[5] Logout");
+            System.out.println("[5] Show Transactions");
+            System.out.println("[6] Logout");
             System.out.print("Select an option: ");
             int choice = input.nextInt();
             input.nextLine(); // consume newline
@@ -235,6 +280,7 @@ public class Main {
                     double charge = input.nextDouble();
                     input.nextLine();
                     caLauncher.getLoggedAccount().charge(charge);
+                    caLauncher.getLoggedAccount().addTransaction("Charge", charge);
                     break;
                 case 2:
                     System.out.print("Enter Savings Account Number for payment: ");
@@ -243,23 +289,42 @@ public class Main {
                     double payAmount = input.nextDouble();
                     input.nextLine();
                     caLauncher.paymentProcess(savAcc, payAmount);
+                    caLauncher.getLoggedAccount().addTransaction("Payment", payAmount);
                     break;
                 case 3:
                     System.out.print("Enter recompense amount: ");
                     double recompense = input.nextDouble();
                     input.nextLine();
                     caLauncher.recompenseProcess(recompense);
+                    caLauncher.getLoggedAccount().addTransaction("Recompense", recompense);
                     break;
                 case 4:
                     System.out.println("Available Credit: " + caLauncher.getLoggedAccount().getBalance());
                     System.out.println("Current Debt: " + caLauncher.getLoggedAccount().getCurrentDebt());
                     break;
                 case 5:
+                    showTransactions(caLauncher.getLoggedAccount());
+                    break;
+                case 6:
                     caLauncher.logout();
                     exit = true;
                     break;
                 default:
                     System.out.println("Invalid option.");
+            }
+        }
+    }
+
+    /**
+     * Shows the transactions for a given account.
+     */
+    private static void showTransactions(Account account) {
+        List<Transaction> transactions = account.getTransactions();
+        if (transactions.isEmpty()) {
+            System.out.println("No transactions available.");
+        } else {
+            for (Transaction transaction : transactions) {
+                System.out.println(transaction);
             }
         }
     }
