@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import Accounts.Account;
 import Accounts.SavingsAccount;
+import Accounts.StudentAccount;
 import Accounts.CreditAccount;
 
 /**
@@ -116,6 +117,13 @@ public class Bank {
         accounts.add(ca);
         return ca;
     }
+
+     public StudentAccount createNewStudentAccount(String accountNumber, String ownerName, double initialValue, String pin) {
+        StudentAccount sa = new StudentAccount(this, accountNumber, ownerName, initialValue, pin);
+        accounts.add(sa);
+        return sa;
+    }
+
 
     @Override
     public String toString() {

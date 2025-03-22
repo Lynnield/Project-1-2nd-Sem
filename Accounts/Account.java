@@ -1,8 +1,9 @@
 package Accounts;
 
 import Bank.Bank;
+import Transactions.Transaction;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 /**
  * An abstract Account class based on the UML:
@@ -16,17 +17,16 @@ import java.util.List;
  *  + getAccountNumber()
  *  + getOwnerName()
  *  + getPin()
- *  + addNewTransaction(...)
+ *  + addNewTransaction(...): void
  *  + toString()
  *  + getBalance()   // abstract method for subclasses to implement
  */
 public abstract class Account {
-    private Bank bank;
-    private String accountNumber;
-    private String ownerName;
-    private String pin;
-    private List<Transaction> transactions;
-    
+    protected Bank bank;
+    protected String accountNumber;
+    protected String ownerName;
+    protected String pin;
+    protected ArrayList<Transaction> transactions;
 
     /**
      * Constructor that sets the basic fields for an account.
@@ -55,17 +55,20 @@ public abstract class Account {
         return pin;
     }
 
-    public List<Transaction> getTransactions() {
+    public ArrayList<Transaction> getTransactions() {
         return transactions;
     }
 
     /**
      * Adds a new transaction to this account's transaction list.
+     * @param accNum The account number that triggered this transaction.
      * @param type The type of transaction (Deposit, Withdraw, etc.).
-     * @param amount The amount of the transaction.
+     * @param description Description or details of the transaction.
      */
-    public void addTransaction(String type, double amount) {
-        transactions.add(new Transaction(accountNumber, Transaction.Transactions.valueOf(type), type, ownerName, type, amount));
+    public void addNewTransaction(String accNum, Transaction.Transactions type, String description) {
+        String formattedDescription = String.format("[%s] %s's %s. %s", ownerName, type, description.split(" ")[1], new Date());
+        Transaction t = new Transaction(accNum, type, formattedDescription);
+        transactions.add(t);
     }
 
     /**
@@ -77,6 +80,7 @@ public abstract class Account {
 
     @Override
     public String toString() {
-        return String.format("Account[%s, %s]", accountNumber, ownerName);
+        String bankName = (bank != null) ? bank.getBankName() : "NoBank";
+        return String.format("%s@%s [Owner: %s]", accountNumber, bankName, ownerName);
     }
 }

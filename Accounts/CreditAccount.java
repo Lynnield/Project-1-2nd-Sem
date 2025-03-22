@@ -1,6 +1,9 @@
 package Accounts;
 
 import Bank.Bank;
+import Transactions.Payment;
+import Transactions.Recompense;
+import Transactions.Transaction;
 
 /**
  * Concrete CreditAccount implementation.
@@ -77,7 +80,7 @@ public class CreditAccount extends Account implements Payment, Recompense {
             return false;
         }
         loanAmount += amount;
-        addTransaction("Charge", amount);
+        addNewTransaction(accountNumber, Transaction.Transactions.Withdraw, "Charged " + amount);
         return true;
     }
 
@@ -93,11 +96,11 @@ public class CreditAccount extends Account implements Payment, Recompense {
         if (!(fromAccount instanceof SavingsAccount)) {
             throw new IllegalAccountType("Payment must come from a SavingsAccount!");
         }
+        SavingsAccount saver = (SavingsAccount) fromAccount;
         if (amount <= 0) {
             System.out.println("Payment must be positive.");
             return false;
         }
-        SavingsAccount saver = (SavingsAccount) fromAccount;
         if (amount > saver.getBalance()) {
             System.out.println("Insufficient funds in source SavingsAccount!");
             return false;
@@ -106,7 +109,9 @@ public class CreditAccount extends Account implements Payment, Recompense {
         saver.withdrawal(amount);
         double oldLoan = loanAmount;
         loanAmount = Math.max(0, loanAmount - amount);
-        addTransaction("Payment", amount);
+        addNewTransaction(accountNumber, Transaction.Transactions.Payment,
+                String.format("Payment of %.2f from %s (old debt=%.2f, new debt=%.2f)",
+                        amount, saver.getAccountNumber(), oldLoan, loanAmount));
         return true;
     }
 
@@ -126,8 +131,17 @@ public class CreditAccount extends Account implements Payment, Recompense {
             return false;
         }
         loanAmount -= amount;
-        addTransaction("Recompense", amount);
+        addNewTransaction(accountNumber, Transaction.Transactions.Recompense, "Recompensed " + amount);
         return true;
+    }
+
+    /**
+     * Returns the logged account.
+     * @return the logged account.
+     */
+    protected Account getLoggedAccount() {
+        // Return the current instance of CreditAccount
+        return this;
     }
 
     @Override

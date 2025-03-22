@@ -29,7 +29,7 @@ public enum Menu {
     /**
      * Accounts.Account type selection menu. Used when creating New Accounts for every Bank.Bank.
      */
-    AccountTypeSelection(new String[]{ "Credit Account", "Savings Account" }, 33),
+    AccountTypeSelection(new String[]{ "Credit Account", "Savings Account", "Student Account" }, 33),
     /**
      * CreditAccount type selection menu. Used when logging in as a CreditAccount.
      */
@@ -38,7 +38,11 @@ public enum Menu {
      * SavingsAccount type selection menu. Used when logging in as a SavingsAccount.
      */
     SavingsAccountMenu(new String[]{ "Show Balance", "Deposit", "Withdraw", "Fund Transfer",
-            "Show Transactions", "Logout" }, 51);
+            "Show Transactions", "Logout" }, 51),
+    /**
+     * StudentAccount type selection menu. Used when logging in as a StudentAccount.
+     */
+    StudentAccountMenu(new String[]{ "Show Balance", "Deposit", "Withdraw", "Fund Transfer", "Show Transactions", "Logout" }, 61);
 
     public final String[] menuOptions;
     public final int menuIdx;
@@ -49,8 +53,8 @@ public enum Menu {
     }
 
     public static String[] getMenuOptions(int menuIdx) {
-        for(Menu menu: Menu.values()) {
-            if(menu.menuIdx == menuIdx) {
+        for (Menu menu : Menu.values()) {
+            if (menu.menuIdx == menuIdx) {
                 return menu.menuOptions;
             }
         }

@@ -6,20 +6,13 @@ import Transactions.FundTransfer;
 import Transactions.Transaction;
 import Transactions.Withdrawal;
 
-/**
- * A concrete SavingsAccount that extends Account.
- * Implements Deposit, Withdrawal, and FundTransfer from the UML.
- * 
- * Additional field:
- *  - balance: double
- */
-public class SavingsAccount extends Account implements Deposit, Withdrawal, FundTransfer {
+public class StudentAccount extends Account implements Deposit, Withdrawal, FundTransfer {
     private double balance;
 
     /**
-     * Constructor for a SavingsAccount, including an initial balance.
+     * Constructor for a StudentAccount, including an initial balance.
      */
-    public SavingsAccount(Bank bank, String accountNumber, String ownerName, double initialBalance, String pin) {
+    public StudentAccount(Bank bank, String accountNumber, String ownerName, double initialBalance, String pin) {
         super(bank, accountNumber, ownerName, pin);
         this.balance = initialBalance;
     }
@@ -33,7 +26,6 @@ public class SavingsAccount extends Account implements Deposit, Withdrawal, Fund
             System.out.println("Deposit must be positive.");
             return false;
         }
-        // Optionally check bank's deposit limit, etc.
         balance += amount;
         addNewTransaction(accountNumber, Transaction.Transactions.Deposit, "Deposited " + amount);
         return true;
@@ -110,6 +102,6 @@ public class SavingsAccount extends Account implements Deposit, Withdrawal, Fund
 
     @Override
     public String toString() {
-        return String.format("SavingsAccount[%s, balance=%.2f]", super.toString(), balance);
+        return String.format("StudentAccount[%s, balance=%.2f]", super.toString(), balance);
     }
 }
